@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { setCookie, getCookie } from './Cookies'
 
 function Login() {
     const [inputId, setInputId] = useState('')
@@ -20,14 +21,23 @@ function Login() {
                 'password': inputPw
                 }
             })
-        .then(res => console.log(res))
+        .then(res => setCookie('TRIPLE_SID', res, {
+            path: "/",
+            secure: true,
+            sameSite: "none",
+        }))
         .catch()
     }
 
     useEffect(() => {
-        axios.get('http://localhost:8080/api/user/session')
-        .then(res => console.log(res))
-        .catch()
+        let token = 'Bearer ' + getCookie('TRIPLE_SID').data
+        const res = axios.get('http://localhost:8080/api/user/session', {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          }
+        });
+        console.log(res)
     },
     [])
 
