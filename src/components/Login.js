@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { setCookie, getCookie } from './Cookies'
+import { setCookie } from './Cookies'
 
 function Login() {
     const [inputId, setInputId] = useState('')
@@ -15,7 +15,7 @@ function Login() {
     }
 
     const onClickLogin = () => {
-        axios.post('http://localhost:8080/api/user/login', null, {
+        axios.post('http://localhost:8080/login', null, {
             params: {
                 'userName': inputId,
                 'password': inputPw
@@ -30,14 +30,7 @@ function Login() {
     }
 
     useEffect(() => {
-        let token = 'Bearer ' + getCookie('TRIPLE_SID').data
-        const res = axios.get('http://localhost:8080/api/user/session', {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          }
-        });
-        console.log(res)
+
     },
     [])
 
