@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { getCookie } from './Cookies'
 import Login from './Login'
-import Review from './Review'
+import CKEditorCustom from './CKEditorCustom'
 
 function Main() {
     const [loginShow, setLoginShow] = useState(false);
@@ -32,7 +32,7 @@ function Main() {
 
     return(
         <div>
-            {loginShow && <h2> <Review userId={userId} userName={userName}></Review></h2>}
+            {loginShow && <CKEditorCustom />}
             {!loginShow &&<Login />}
         </div>
     )
