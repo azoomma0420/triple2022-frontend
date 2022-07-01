@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { getCookie } from './Cookies'
 import Login from './Login'
-import CKEditorCustom from './CKEditorCustom'
+import TextEditor from './TextEditor'
 
 function Main() {
     const [loginShow, setLoginShow] = useState(false);
     const [userName, setUserName] = useState('')
     const [userId, setUserId] = useState(0)
+
+    const [title, setTitle] = useState('')
+    const [content, setContent] = useState('')
+    const [point, setPoint] = useState(0)
+    const [reviews, setReviews] = useState([]);
 
     useEffect(() => {
         let cookie = getCookie('TRIPLE_SID')
@@ -25,14 +30,19 @@ function Main() {
                 setLoginShow(true);
          })
         .catch()
-
-        console.log(userName)
     },
     [])
 
     return(
         <div>
-            {loginShow && <CKEditorCustom />}
+            {loginShow &&
+                <TextEditor
+                    setContent={setContent}
+                    userName={userName}
+                    point={point}
+                    reviews={reviews}
+                />}
+            {content}
             {!loginShow &&<Login />}
         </div>
     )

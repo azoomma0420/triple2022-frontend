@@ -2,9 +2,12 @@ import React, { Component } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import { getCookie } from './Cookies'
+import Review from './Review'
 
-class CKEditorCustom extends Component{
+class TextEditor extends Component{
   render(){
+  //https://medium.com/swlh/ckeditor5-with-custom-image-uploader-on-react-67b4496cb07d
+  //https://ckeditor.com/docs/ckeditor5/latest/framework/guides/deep-dive/upload-adapter.html#activating-a-custom-upload-adapter
     const custom_config = {
       extraPlugins: [ MyCustomUploadAdapterPlugin ],
       toolbar: {
@@ -32,12 +35,19 @@ class CKEditorCustom extends Component{
 
     return(
         <div>
-        <h2>Triple 리뷰 업로드</h2>
+          <h2>{this.props.userName}님 현재 포인트 {this.props.point}점 입니다.</h2>
           <CKEditor
             required
             editor={ClassicEditor}
             config={custom_config}
+            onChange={(event, editor) => {
+                this.props.setContent(editor.getData())
+            }}
           />
+          <p>남긴 리뷰 들...</p>
+          {
+            this.props.reviews?.map(review=> (<Review review={review} />))
+          }
         </div>
     )
   }
@@ -80,7 +90,7 @@ class MyUploadAdapter {
         const xhr = this.xhr = new XMLHttpRequest();
 
         xhr.open('POST', this.url, true);
-        xhr.responseType = 'json';
+        //xhr.responseType = 'json';
         xhr.setRequestHeader('Access-Control-Allow-Origin', '*')
         xhr.setRequestHeader('Authorization', token)
     }
@@ -95,7 +105,7 @@ class MyUploadAdapter {
         xhr.addEventListener( 'abort', () => reject() );
         xhr.addEventListener( 'load', () => {
             const response = xhr.response;
-            if ( response.error ) {
+            if ( !response || response.error ) {
                 return reject( response && response.error ? response.error.message : genericErrorText );
             }
 
@@ -129,4 +139,4 @@ class MyUploadAdapter {
 
 }
 
-export default CKEditorCustom
+export default TextEditor

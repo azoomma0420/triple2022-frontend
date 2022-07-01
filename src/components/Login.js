@@ -46,7 +46,7 @@ function Login() {
                 <input type='password' name='input_pw' value={inputPw} onChange={handleInputPw} />
             </div>
             <div>
-                <button type='button' onClick={onClickLogin}>Login</button>
+                <button type='submit' onClick={onClickLogin}>Login</button>
             </div>
         </div>
     )
