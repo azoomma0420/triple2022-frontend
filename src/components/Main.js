@@ -4,8 +4,11 @@ import { setCookie, getCookie } from './Cookies'
 import Login from './Login'
 import TextEditor from './TextEditor'
 import Review from './Review'
+import UseGeoLocation from './UseGeoLocation'
 
 function Main() {
+
+    const location = UseGeoLocation()
 
     const cookie = getCookie('TRIPLE_SID')
     const token = 'Bearer ' + cookie?.data
@@ -23,8 +26,9 @@ function Main() {
     //const [attachedPhotoIds, setAttachedPhotoIds ] = useState([])
 
     const onClickSubmit = (action, id) => {
+        console.log(placeId)
+        console.log(getCookie('attachedPhotoIds'))
         onLoadImageIds()
-
         const data = {
             type: "REVIEW",
             action: action,
@@ -99,6 +103,24 @@ function Main() {
         setReviewId(id)
     }
 
+    const onSavePosition = () => {
+        axios.post('http://localhost:8080/savePlace', null, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+            params: {
+                latitude: location.coordinates.lat,
+                longitude: location.coordinates.lng,
+            }
+        })
+        .then(res => {
+            console.log(res.data)
+            setPlaceId(res.data)
+        })
+        .catch()
+    }
+
     useEffect(() => {
         onLoadSession()
         onLoadReview()
@@ -115,6 +137,9 @@ function Main() {
                     <div>
                         <button type='submit' onClick={(e)=>{onClickSubmit("ADD", null, e)}}>전송</button>
                     </div>
+                    <div>
+                        <button type='submit' onClick={onSavePosition}>위치저장</button>
+                    </div>
                     <br />
                     <br />
                     {
@@ -125,7 +150,9 @@ function Main() {
                     <br />
                 </div>
             }
-
+            {location.loaded
+                    ? JSON.stringify(location)
+                  : "Location data not available yet."}
             {!loginShow &&<Login />}
         </div>
     )
