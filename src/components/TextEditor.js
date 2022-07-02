@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import { getCookie } from './Cookies'
-import Review from './Review'
 
 class TextEditor extends Component{
   render(){
@@ -35,19 +34,15 @@ class TextEditor extends Component{
 
     return(
         <div>
-          <h2>{this.props.userName}님 현재 포인트 {this.props.point}점 입니다.</h2>
           <CKEditor
             required
             editor={ClassicEditor}
             config={custom_config}
+            data={this.props.data}
             onChange={(event, editor) => {
                 this.props.setContent(editor.getData())
             }}
           />
-          <p>남긴 리뷰 들...</p>
-          {
-            this.props.reviews?.map(review=> (<Review review={review} />))
-          }
         </div>
     )
   }
@@ -61,7 +56,7 @@ function MyCustomUploadAdapterPlugin(editor) {
 
 class MyUploadAdapter {
     constructor(props) {
-        // CKEditor 5's FileLoader instance.
+      // CKEditor 5's FileLoader instance.
       this.loader = props;
       // URL where to send files.
       this.url = `http://localhost:8080/saveImage`;
