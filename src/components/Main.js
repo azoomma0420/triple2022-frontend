@@ -64,7 +64,8 @@ function Main() {
             }
         })
         .then(res => {
-            setAttachedPhotoIds([...attachedPhotoIds, res.data[0]])
+            if(res.data[0] != null)
+                setAttachedPhotoIds([...attachedPhotoIds, res.data[0]])
         })
         .catch()
     }
@@ -115,14 +116,16 @@ function Main() {
             }
         })
         .then(res => {
-            console.log(res.data)
+            alert('새로운 장소 등록 성공!')
             setCookie('place', res.data, {
                             path: "/",
                             secure: true,
                             sameSite: "none",
             })
         })
-        .catch()
+        .catch(
+            alert('이미 등록된 장소 입니다.')
+        )
     }
 
     const onLoadPosition = () => {
