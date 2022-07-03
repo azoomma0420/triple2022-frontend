@@ -23,18 +23,16 @@ function Main() {
     const [reviewId, setReviewId] = useState(0)
     const [placeId, setPlaceId] = useState(0)
     const [content, setContent] = useState('')
-    //const [attachedPhotoIds, setAttachedPhotoIds ] = useState([])
+    const [attachedPhotoIds, setAttachedPhotoIds ] = useState([])
+    //const attachedPhotoIds = getCookie('attachedPhotoIds')
 
     const onClickSubmit = (action, id) => {
-        console.log(placeId)
-        console.log(getCookie('attachedPhotoIds'))
-        onLoadImageIds()
         const data = {
             type: "REVIEW",
             action: action,
             reviewId: id,
             content: content,
-            attachedPhotoIds : getCookie('attachedPhotoIds'),
+            attachedPhotoIds : attachedPhotoIds,
             userId : userId,
             placeId : placeId
         }
@@ -47,6 +45,12 @@ function Main() {
         })
         .then()
         .catch()
+
+        setCookie('attachedPhotoIds', null, {
+                        path: "/",
+                        secure: true,
+                        sameSite: "none",
+        })
     }
 
     const onLoadImageIds = () => {
@@ -60,11 +64,7 @@ function Main() {
             }
         })
         .then(res => {
-            setCookie('attachedPhotoIds', res.data, {
-                path: "/",
-                secure: true,
-                sameSite: "none",
-            })
+            setAttachedPhotoIds([...attachedPhotoIds, res.data[0]])
         })
         .catch()
     }
@@ -116,9 +116,28 @@ function Main() {
         })
         .then(res => {
             console.log(res.data)
-            setPlaceId(res.data)
+            setCookie('place', res.data, {
+                            path: "/",
+                            secure: true,
+                            sameSite: "none",
+            })
         })
         .catch()
+    }
+
+    const onLoadPosition = () => {
+        setPlaceId(getCookie('place'))
+    }
+
+    const onLoadImage = () => {
+    }
+
+    const onLogout = () => {
+        setCookie('TRIPLE_SID', '', {
+                    path: "/",
+                    secure: true,
+                    sameSite: "none",
+        })
     }
 
     useEffect(() => {
@@ -135,10 +154,19 @@ function Main() {
                     <h2>리뷰를 남겨 주세요 </h2>
                     <TextEditor data={content} setContent={setContent}  />
                     <div>
-                        <button type='submit' onClick={(e)=>{onClickSubmit("ADD", null, e)}}>전송</button>
+                        <button type='button' onClick={(e)=>{onClickSubmit("ADD", null, e)}}>전송</button>
                     </div>
                     <div>
-                        <button type='submit' onClick={onSavePosition}>위치저장</button>
+                        <button type='button' onClick={onSavePosition}>위치저장</button>
+                    </div>
+                    <div>
+                        <button type='button' onClick={onLoadImageIds}>이미지 가져오기</button>
+                    </div>
+                    <div>
+                        <button type='button' onClick={onLoadPosition}>위치 가져오기</button>
+                    </div>
+                    <div>
+                        <button type='button' onClick={onLogout}>로그아웃</button>
                     </div>
                     <br />
                     <br />
@@ -150,10 +178,8 @@ function Main() {
                     <br />
                 </div>
             }
-            {location.loaded
-                    ? JSON.stringify(location)
-                  : "Location data not available yet."}
             {!loginShow &&<Login />}
+            이미지: {attachedPhotoIds}, 장소: {placeId}
         </div>
     )
 }
